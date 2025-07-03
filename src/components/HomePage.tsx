@@ -1,13 +1,10 @@
 // src/components/HomePage.tsx
 import React from 'react';
-
-// Define what props this component expects
-interface HomePageProps {
-  onNavigate: (page: 'home' | 'decks' | 'progress') => void;
-}
+import { useNavigate } from 'react-router-dom';
 
 // Create the HomePage component
-const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
+const HomePage = () => {
+  const navigate = useNavigate();
   return (
     <div className="page active">
       <div className="home-page" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -18,13 +15,13 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           <div className="main-buttons">
             <button 
               className="main-btn" 
-              onClick={() => onNavigate('decks')}
+              onClick={() => navigate('/decks')}
             >
               📚 Explore Decks
             </button>
             <button 
               className="main-btn" 
-              onClick={() => onNavigate('progress')}
+              onClick={() => navigate('/progress')}
             >
               📊 Check Progress
             </button>

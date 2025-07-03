@@ -1,5 +1,6 @@
 // components/Navigation.tsx - Updated with user menu and logout
 import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 
 interface User {
   id: string;
@@ -10,15 +11,11 @@ interface User {
 }
 
 interface NavigationProps {
-  currentPage: 'home' | 'decks' | 'progress';
-  onPageChange: (page: 'home' | 'decks' | 'progress') => void;
   currentUser?: User | null;
   onLogout?: () => void;
 }
 
 const Navigation: React.FC<NavigationProps> = ({ 
-  currentPage, 
-  onPageChange, 
   currentUser,
   onLogout 
 }) => {
@@ -36,24 +33,9 @@ const Navigation: React.FC<NavigationProps> = ({
       <div className="logo">NebuLearn</div>
       
       <div className="nav-links">
-        <button 
-          className={`nav-link ${currentPage === 'home' ? 'active' : ''}`}
-          onClick={() => onPageChange('home')}
-        >
-          Home
-        </button>
-        <button 
-          className={`nav-link ${currentPage === 'decks' ? 'active' : ''}`}
-          onClick={() => onPageChange('decks')}
-        >
-          Decks
-        </button>
-        <button 
-          className={`nav-link ${currentPage === 'progress' ? 'active' : ''}`}
-          onClick={() => onPageChange('progress')}
-        >
-          Progress
-        </button>
+        <NavLink to="/" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} end>Home</NavLink>
+        <NavLink to="/decks" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Decks</NavLink>
+        <NavLink to="/progress" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Progress</NavLink>
       </div>
 
       {/* User Menu */}
