@@ -10,27 +10,25 @@ interface HomePageProps {
 const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   return (
     <div className="page active">
-      <div className="home-page">
-        <div className="nebula-center">
-          <div>
-            <h1 className="main-title">NebuLearn</h1>
-            <p className="subtitle">expand your mind</p>
+      <div className="home-page" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="intro-glass-card">
+          <div className="nebula-glow"></div>
+          <h1 className="main-title">NebuLearn</h1>
+          <p className="subtitle">Expand your mind</p>
+          <div className="main-buttons">
+            <button 
+              className="main-btn" 
+              onClick={() => onNavigate('decks')}
+            >
+              📚 Explore Decks
+            </button>
+            <button 
+              className="main-btn" 
+              onClick={() => onNavigate('progress')}
+            >
+              📊 Check Progress
+            </button>
           </div>
-        </div>
-        
-        <div className="main-buttons">
-          <button 
-            className="main-btn" 
-            onClick={() => onNavigate('decks')}
-          >
-            📚 Explore Decks
-          </button>
-          <button 
-            className="main-btn" 
-            onClick={() => onNavigate('progress')}
-          >
-            📊 Check Progress
-          </button>
         </div>
       </div>
     </div>

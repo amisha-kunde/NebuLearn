@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-
-// src/components/ProgressPage.tsx
+import React, { useState, useEffect } from 'react';
 import { Deck, StudySession } from '../types';
 
 interface ProgressPageProps {
@@ -15,6 +13,48 @@ const ProgressPage: React.FC<ProgressPageProps> = ({
   onUpdateSessions 
 }) => {
   const [studySessions, setStudySessions] = useState<StudySession[]>(initialSessions);
+
+  // localStorage key for saving study sessions
+  const STUDY_SESSIONS_KEY = 'nebulearn_study_sessions';
+
+  // Load saved study sessions from localStorage on component mount
+  useEffect(() => {
+    loadStudySessions();
+  }, []);
+
+  // Save study sessions to localStorage whenever they change
+  useEffect(() => {
+    saveStudySessions();
+  }, [studySessions]);
+
+  // Load study sessions from localStorage
+  const loadStudySessions = () => {
+    try {
+      const savedSessions = localStorage.getItem(STUDY_SESSIONS_KEY);
+      if (savedSessions) {
+        const sessions: StudySession[] = JSON.parse(savedSessions);
+        setStudySessions(sessions);
+        console.log('✅ Loaded study sessions from localStorage:', sessions.length, 'sessions');
+        
+        // Also update the parent component
+        if (onUpdateSessions) {
+          onUpdateSessions(sessions);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Failed to load study sessions from localStorage:', error);
+    }
+  };
+
+  // Save study sessions to localStorage
+  const saveStudySessions = () => {
+    try {
+      localStorage.setItem(STUDY_SESSIONS_KEY, JSON.stringify(studySessions));
+      console.log('💾 Study sessions saved to localStorage');
+    } catch (error) {
+      console.error('❌ Failed to save study sessions to localStorage:', error);
+    }
+  };
 
   // Generate calendar dates for June 2025
   const generateDates = () => {
@@ -60,33 +100,36 @@ const ProgressPage: React.FC<ProgressPageProps> = ({
     let newSessions: StudySession[];
 
     if (nextDifficulty === null) {
-      // Remove the session
+      // Remove the session (dot becomes transparent)
       newSessions = studySessions.filter(session => 
         !(session.deckId === deckId && session.date === date)
       );
     } else {
       if (existingSession) {
-        // Update existing session
+        // Update existing session (change dot color)
         newSessions = studySessions.map(session => 
           session.deckId === deckId && session.date === date
             ? { ...session, difficulty: nextDifficulty }
             : session
         );
       } else {
-        // Create new session
+        // Create new session (add colored dot)
         const newSession: StudySession = {
           deckId,
           deckName: deck.name,
           date,
           difficulty: nextDifficulty,
-          cardsStudied: Math.floor(Math.random() * 20) + 5, // Random 5-25 cards
-          successRate: Math.floor(Math.random() * 40) + 60 // Random 60-100%
+          cardsStudied: Math.floor(Math.random() * 20) + 5,
+          successRate: Math.floor(Math.random() * 40) + 60
         };
         newSessions = [...studySessions, newSession];
       }
     }
 
+    // Update state (this will trigger localStorage save via useEffect)
     setStudySessions(newSessions);
+    
+    // Also update parent component
     if (onUpdateSessions) {
       onUpdateSessions(newSessions);
     }
@@ -138,6 +181,10 @@ const ProgressPage: React.FC<ProgressPageProps> = ({
           fontSize: '0.9rem'
         }}>
           Click on any date to add a study session. Click again to cycle through difficulty levels.
+          <br />
+          <span style={{ fontSize: '0.8rem', color: '#888' }}>
+            Your progress is automatically saved
+          </span>
         </p>
         
         <div style={{ 
@@ -262,10 +309,10 @@ const ProgressPage: React.FC<ProgressPageProps> = ({
                         transition: 'all 0.3s ease',
                         border: '2px solid transparent',
                         background: session 
-                          ? session.difficulty === 'hard' ? '#f44336'
-                          : session.difficulty === 'medium' ? '#ff9800'
-                          : '#4caf50'
-                          : 'rgba(255, 255, 255, 0.1)',
+                          ? session.difficulty === 'hard' ? '#f44336'    // Red
+                          : session.difficulty === 'medium' ? '#ff9800'  // Orange/Yellow
+                          : '#4caf50'                                     // Green
+                          : 'rgba(255, 255, 255, 0.1)',                 // Transparent
                         boxShadow: session 
                           ? `0 0 10px ${
                               session.difficulty === 'hard' ? 'rgba(244, 67, 54, 0.3)'
