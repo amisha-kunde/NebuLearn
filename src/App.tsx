@@ -32,19 +32,21 @@ const mockDecks: Deck[] = [
 ];
 
 const mockStudySessions: StudySession[] = [
-  { deckId: 'deck1', deckName: 'TypeScript Basics', date: '2025-06-01', difficulty: 'hard', cardsStudied: 10, successRate: 60 },
-  { deckId: 'deck1', deckName: 'TypeScript Basics', date: '2025-06-03', difficulty: 'hard', cardsStudied: 15, successRate: 65 },
-  { deckId: 'deck1', deckName: 'TypeScript Basics', date: '2025-06-05', difficulty: 'medium', cardsStudied: 12, successRate: 75 },
+  { deckId: 'deck_1', deckName: 'TypeScript Basics', date: '2025-06-01', difficulty: 'hard', cardsStudied: 10, successRate: 60 },
+  { deckId: 'deck_1', deckName: 'TypeScript Basics', date: '2025-06-03', difficulty: 'hard', cardsStudied: 15, successRate: 65 },
+  { deckId: 'deck_1', deckName: 'TypeScript Basics', date: '2025-06-05', difficulty: 'medium', cardsStudied: 12, successRate: 75 },
 ];
 
 function App() {
   return (
-    <div className="App">
-      <div className="nebula-background"></div>
-      <div className="stars"></div>
-      <div className="container">
-        <Router>
+    <Router>
+      <div className="App">
+        <div className="nebula-background"></div>
+        <div className="stars"></div>
+        
+        <div className="container">
           <Navigation />
+          
           <main className="main-content">
             <Routes>
               <Route path="/" element={<HomePage />} />
@@ -52,9 +54,9 @@ function App() {
               <Route path="/progress" element={<ProgressPage decks={mockDecks} studySessions={mockStudySessions} />} />
             </Routes>
           </main>
-        </Router>
+        </div>
       </div>
-    </div>
+    </Router>
   );
 }
 
