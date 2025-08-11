@@ -20,7 +20,7 @@ const mockDecks: Deck[] = [
     createdAt: new Date(),
   },
   {
-    id: 'deck2',
+    id: 'deck_2',  // Changed from 'deck2' to 'deck_2' for consistency
     name: 'React Hooks',
     description: 'Advanced React patterns with hooks, context, and state management.',
     difficulty: 'medium',
@@ -32,9 +32,9 @@ const mockDecks: Deck[] = [
 ];
 
 const mockStudySessions: StudySession[] = [
-  { deckId: 'deck1', deckName: 'TypeScript Basics', date: '2025-06-01', difficulty: 'hard', cardsStudied: 10, successRate: 60 },
-  { deckId: 'deck1', deckName: 'TypeScript Basics', date: '2025-06-03', difficulty: 'hard', cardsStudied: 15, successRate: 65 },
-  { deckId: 'deck1', deckName: 'TypeScript Basics', date: '2025-06-05', difficulty: 'medium', cardsStudied: 12, successRate: 75 },
+  { deckId: 'deck_1', deckName: 'TypeScript Basics', date: '2025-06-01', difficulty: 'hard', cardsStudied: 10, successRate: 60 },
+  { deckId: 'deck_1', deckName: 'TypeScript Basics', date: '2025-06-03', difficulty: 'hard', cardsStudied: 15, successRate: 65 },
+  { deckId: 'deck_1', deckName: 'TypeScript Basics', date: '2025-06-05', difficulty: 'medium', cardsStudied: 12, successRate: 75 },
 ];
 
 function App() {
@@ -49,7 +49,7 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/decks" element={<DecksPage decks={mockDecks} />} />
-              <Route path="/progress" element={<ProgressPage decks={mockDecks} studySessions={mockStudySessions} />} />
+              <Route path="/progress" element={<ProgressPage decks={mockDecks} />} />
             </Routes>
           </main>
         </Router>

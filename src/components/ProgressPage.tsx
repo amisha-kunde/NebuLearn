@@ -3,29 +3,33 @@ import { Deck, StudySession } from '../types';
 
 interface ProgressPageProps {
   decks: Deck[];
-  studySessions: StudySession[];
   onUpdateSessions?: (sessions: StudySession[]) => void;
 }
 
 const ProgressPage: React.FC<ProgressPageProps> = ({ 
   decks, 
-  studySessions: initialSessions, 
   onUpdateSessions 
 }) => {
-  const [studySessions, setStudySessions] = useState<StudySession[]>(initialSessions);
+  const [studySessions, setStudySessions] = useState<StudySession[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // localStorage key for saving study sessions
   const STUDY_SESSIONS_KEY = 'nebulearn_study_sessions';
+
+  // Default initial sessions (only used if localStorage is completely empty)
+  
 
   // Load saved study sessions from localStorage on component mount
   useEffect(() => {
     loadStudySessions();
   }, []);
 
-  // Save study sessions to localStorage whenever they change
+  // Save study sessions to localStorage whenever they change (but only after initial load)
   useEffect(() => {
-    saveStudySessions();
-  }, [studySessions]);
+    if (isLoaded) {
+      saveStudySessions();
+    }
+  }, [studySessions, isLoaded]);
 
   // Load study sessions from localStorage
   const loadStudySessions = () => {
@@ -40,9 +44,17 @@ const ProgressPage: React.FC<ProgressPageProps> = ({
         if (onUpdateSessions) {
           onUpdateSessions(sessions);
         }
+      } else {
+        // If no saved sessions, use the default initial sessions (one-time only)
+        console.log('📝 No saved sessions found. Using default initial sessions.');
+        
       }
     } catch (error) {
       console.error('❌ Failed to load study sessions from localStorage:', error);
+      // Fallback to default initial sessions if localStorage fails
+      
+    } finally {
+      setIsLoaded(true);
     }
   };
 
@@ -50,7 +62,7 @@ const ProgressPage: React.FC<ProgressPageProps> = ({
   const saveStudySessions = () => {
     try {
       localStorage.setItem(STUDY_SESSIONS_KEY, JSON.stringify(studySessions));
-      console.log('💾 Study sessions saved to localStorage');
+      console.log('💾 Study sessions saved to localStorage:', studySessions.length, 'sessions');
     } catch (error) {
       console.error('❌ Failed to save study sessions to localStorage:', error);
     }
@@ -104,6 +116,7 @@ const ProgressPage: React.FC<ProgressPageProps> = ({
       newSessions = studySessions.filter(session => 
         !(session.deckId === deckId && session.date === date)
       );
+      console.log('🗑️ Removed session for', deck.name, 'on', date);
     } else {
       if (existingSession) {
         // Update existing session (change dot color)
@@ -112,6 +125,7 @@ const ProgressPage: React.FC<ProgressPageProps> = ({
             ? { ...session, difficulty: nextDifficulty }
             : session
         );
+        console.log('🔄 Updated session for', deck.name, 'on', date, 'to', nextDifficulty);
       } else {
         // Create new session (add colored dot)
         const newSession: StudySession = {
@@ -123,6 +137,7 @@ const ProgressPage: React.FC<ProgressPageProps> = ({
           successRate: Math.floor(Math.random() * 40) + 60
         };
         newSessions = [...studySessions, newSession];
+        console.log('➕ Added new session for', deck.name, 'on', date, 'as', nextDifficulty);
       }
     }
 
@@ -145,6 +160,25 @@ const ProgressPage: React.FC<ProgressPageProps> = ({
     const date = new Date(dateString);
     return `Jun ${date.getDate()}`;
   };
+
+  // Show loading state while data is being loaded
+  if (!isLoaded) {
+    return (
+      <div style={{ 
+        padding: '40px', 
+        background: '#0a0a0a', 
+        color: 'white', 
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '1.5rem', color: '#e1bee7' }}>Loading your progress...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ 
@@ -183,7 +217,7 @@ const ProgressPage: React.FC<ProgressPageProps> = ({
           Click on any date to add a study session. Click again to cycle through difficulty levels.
           <br />
           <span style={{ fontSize: '0.8rem', color: '#888' }}>
-            Your progress is automatically saved
+            Your progress is automatically saved and will persist when you refresh the page
           </span>
         </p>
         
